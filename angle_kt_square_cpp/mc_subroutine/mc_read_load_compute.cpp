@@ -1496,27 +1496,22 @@ void mc_computation::execute_mc(double * s_vec_init, double * s_angle_vec_init,c
 
 
 
-void mc_computation::compute_M_avg_over_sites(double &Mx, double &My, double &Mz,const int &startInd, const int & length)
+void mc_computation::compute_M_avg_over_sites(double &Mx, double &My, double &Mz, const int &startInd, const int &length)
 {
-double sum_x=0, sum_y=0,sum_z=0;
-    for (int j=startInd;j<startInd+length;j+=3)
+    double sum_x = 0, sum_y = 0, sum_z = 0;
+    short int phase = 1;
+    for (int j = startInd; j < startInd + length; j += 3)
     {
-        sum_x+=this->s_all_ptr[j];
-    }//end for j
 
-    Mx=sum_x/static_cast<double>(lattice_num);
+        sum_x += (this->s_all_ptr[j]) * phase;
+        sum_y += (this->s_all_ptr[j + 1]) * phase;
+        // sum_z+=this->s_all_ptr[j+2];
+        phase *= -1;
+    } // end for j
 
-    for (int j=startInd+1;j<startInd+length;j+=3)
-    {
-        sum_y+=this->s_all_ptr[j];
-    }
-    My=sum_y/static_cast<double>(lattice_num);
-
-    for (int j=startInd+2;j<startInd+length;j+=3)
-    {
-        sum_z+=this->s_all_ptr[j];
-    }
-    Mz=sum_z/static_cast<double>(lattice_num);
+    Mx = sum_x / static_cast<double>(lattice_num);
+    My = sum_y / static_cast<double>(lattice_num);
+    Mz = 0;
 }
 
 
@@ -1561,4 +1556,5 @@ void mc_computation::compute_all_magnetizations_parallel()
     for (auto& thread : threads) {
         thread.join();
     }
+
 }
